@@ -99,7 +99,7 @@ StatusCode JF17::execute( generator::Event &ctx )
     particles_in_jets.push_back( part.get() );
   }
 
-  MSG_DEBUG("Input particles for FastJet: " << input_particles.size());
+  //MSG_DEBUG("Input particles for FastJet: " << input_particles.size());
 
   // Clusterize hadrons
   fastjet::JetDefinition jet_def(fastjet::antikt_algorithm, 0.4);
@@ -121,19 +121,19 @@ StatusCode JF17::execute( generator::Event &ctx )
     for (const auto &sub : jet.constituents() ){
       const HepMC3::GenParticle* part = particles_in_jets[sub.user_index()];
       int pid = std::abs(part->pid());
-      MSG_DEBUG("Jet constituent PID: " << pid);
+      //MSG_DEBUG("Jet constituent PID: " << pid);
       if ( pid==11 || pid==22 ) {
-        MSG_DEBUG("Jet constituent PID: " << pid << " is electron or photon. e = " << sub.e());
+        //MSG_DEBUG("Jet constituent PID: " << pid << " is electron or photon. e = " << sub.e());
         energy_em += sub.e();
       }
     }
 
     float em_frac = energy_em / jet.e();
-    MSG_DEBUG("Jet EM fraction: " << em_frac);
-    MSG_DEBUG("Jet Pt: " << jet.pt());
-    MSG_DEBUG("Jet eta: " << jet.eta());
-    MSG_DEBUG("Jet phi: " << jet.phi());
-    MSG_DEBUG("Jet e: " << jet.e());
+    MSG_INFO("Jet EM fraction: " << em_frac);
+    MSG_INFO("Jet Pt: " << jet.pt());
+    MSG_INFO("Jet eta: " << jet.eta());
+    MSG_INFO("Jet phi: " << jet.phi());
+    MSG_INFO("Jet e: " << jet.e());
    
     if (jet.pt() > m_minPt/1e3 && em_frac > m_maxEMFraction){
       ok=true;

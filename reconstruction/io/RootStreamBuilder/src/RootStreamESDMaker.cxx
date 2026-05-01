@@ -265,7 +265,7 @@ StatusCode RootStreamESDMaker::serialize( EventContext &ctx ) const
 
                 // NOTE: avoid cell duplication given RoI superposition
                 if ( cell_map.count(descriptor->hash())){
-                  MSG_WARNING("Cell already exists for cell " << descriptor->hash() );
+                  //MSG_WARNING("Cell already exists for cell " << descriptor->hash() );
                   continue;
                 }
                 cell_map.insert( std::make_pair( descriptor->hash(), cell ) );
