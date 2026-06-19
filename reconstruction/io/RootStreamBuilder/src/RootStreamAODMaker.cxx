@@ -262,7 +262,7 @@ StatusCode RootStreamAODMaker::serialize( EventContext &ctx ) const
 
   // digitalized clusters
   if(ctx.exist(m_inputClusterKey)){
-    serializeCaloCluster(ctx, m_inputClusterKey, container_clus, container_cells, container_descriptor);
+    serializeCaloCluster(ctx, m_inputClusterKey, container_clus, container_cells, container_descriptor, true);
   }
   if(ctx.exist(m_inputRingerKey)){
     serializeCaloRings(ctx, m_inputRingerKey, container_rings);
@@ -276,7 +276,7 @@ StatusCode RootStreamAODMaker::serialize( EventContext &ctx ) const
   
   // Truth clusters
   if(ctx.exist(m_inputTruthClusterKey)){
-    serializeCaloCluster(ctx, m_inputTruthClusterKey, container_clus_truth, container_cells_truth, container_descriptor);
+    serializeCaloCluster(ctx, m_inputTruthClusterKey, container_clus_truth, container_cells_truth, container_descriptor, false);
   }
   if(ctx.exist(m_inputTruthRingerKey)){
     serializeCaloRings(ctx, m_inputTruthRingerKey, container_rings_truth);
@@ -314,7 +314,8 @@ void RootStreamAODMaker::serializeCaloCluster( EventContext &ctx ,
                                                std::string key, 
                                                std::vector<xAOD::CaloCluster_t> *container_t,
                                                std::vector<xAOD::CaloCell_t> *container_cells_t,
-                                               std::vector<xAOD::CaloDetDescriptor_t> *container_descriptor_t
+                                               std::vector<xAOD::CaloDetDescriptor_t> *container_descriptor_t,
+                                               bool dump_descriptor
                                               ) const
 {
     SG::ReadHandle<xAOD::CaloClusterContainer> container( key, ctx );
@@ -323,6 +324,7 @@ void RootStreamAODMaker::serializeCaloCluster( EventContext &ctx ,
     {
       MSG_FATAL("It's not possible to read the xAOD::CaloClusterContainer from this Context using this key " << key );
     }
+    std::map<unsigned long int, const xAOD::CaloCell*> cell_map;
 
     for (const auto clus : **container.ptr() ){
       xAOD::CaloCluster_t clus_t;
@@ -331,7 +333,7 @@ void RootStreamAODMaker::serializeCaloCluster( EventContext &ctx ,
       container_t->push_back(clus_t);
 
       if (m_dumpCells){
-        serializeCells(clus, container_cells_t, container_descriptor_t);
+        serializeCells(clus, container_cells_t, container_descriptor_t, cell_map, dump_descriptor );
       }
 
     }
@@ -343,10 +345,13 @@ void RootStreamAODMaker::serializeCaloCluster( EventContext &ctx ,
 
 void RootStreamAODMaker::serializeCells( const xAOD::CaloCluster *clus,
                                          std::vector<xAOD::CaloCell_t> *container_t,
-                                         std::vector<xAOD::CaloDetDescriptor_t> *container_descriptor_t ) const
+                                         std::vector<xAOD::CaloDetDescriptor_t> *container_descriptor_t,
+                                         std::map<unsigned long int, const xAOD::CaloCell*> &cell_map,
+                                         bool dump_descriptor
+                                        ) const
 {
 
-    std::map<unsigned long int, const xAOD::CaloCell*> cell_map;
+    //std::map<unsigned long int, const xAOD::CaloCell*> cell_map;
 
     for(const auto&cell : clus->cells()){
 
@@ -363,7 +368,8 @@ void RootStreamAODMaker::serializeCells( const xAOD::CaloCluster *clus,
         container_t->push_back(cell_t);
       }
       
-      { // serialize cell descriptor
+      if (dump_descriptor){
+        // serialize cell descriptor
         const xAOD::CaloDetDescriptor *det = cell->descriptor();
         xAOD::CaloDetDescriptor_t det_t;
         xAOD::CaloDetDescriptorConverter cnv;

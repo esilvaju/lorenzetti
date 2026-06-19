@@ -69,8 +69,8 @@ class RootStreamAODMaker : public Gaugi::Algorithm
                                std::string key, 
                                std::vector<xAOD::CaloCluster_t> *container_t,
                                std::vector<xAOD::CaloCell_t> *container_cells_t,
-                               std::vector<xAOD::CaloDetDescriptor_t> *container_descriptor_t
-                              ) const;
+                               std::vector<xAOD::CaloDetDescriptor_t> *container_descriptor_t,
+                               bool dump_descriptor = true ) const;
 
     void serializeCaloRings( SG::EventContext &ctx , 
                              std::string key, 
@@ -94,7 +94,9 @@ class RootStreamAODMaker : public Gaugi::Algorithm
 
     void serializeCells( const xAOD::CaloCluster *clus,
                          std::vector<xAOD::CaloCell_t> *container_t,
-                         std::vector<xAOD::CaloDetDescriptor_t> *container_descriptor_t ) const;
+                         std::vector<xAOD::CaloDetDescriptor_t> *container_descriptor_t,
+                         std::map<unsigned long int, const xAOD::CaloCell*> &cell_map,
+                         bool dump_descriptor = true ) const;
 
     std::string m_ntupleName;
 
