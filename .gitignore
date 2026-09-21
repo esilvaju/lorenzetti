@@ -49,3 +49,4 @@ doc/source/cxx/
 doc/mock_site_packages/
 doc/get-pip.pydoc/venv*/
 doc/source/guides/*.ipynb
+.devcontainer/
