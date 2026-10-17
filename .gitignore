@@ -50,3 +50,5 @@ doc/mock_site_packages/
 doc/get-pip.pydoc/venv*/
 doc/source/guides/*.ipynb
 .devcontainer/
+# baseline de regressão (issue #2): ESD/EVT de referência versionados de propósito
+!tests/baseline/*.root
